@@ -1,0 +1,8 @@
+{
+  "name": "@doctor/thread",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./src/mod.ts",
+    "./worker": "./src/worker.ts"
+  }
+}
