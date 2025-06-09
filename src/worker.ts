@@ -1,6 +1,3 @@
-/// <reference no-default-lib="true" />
-/// <reference lib="deno.worker" />
-
 /**
  * A utility type to optionally return a promise.
  * @typeparam T The type that may be wrapped in a Promise.
@@ -26,13 +23,16 @@ export type OptionalPromise<T> = T | Promise<T>;
 export function listen<I, O>(
   handle: (input: I) => OptionalPromise<[O, Transferable[]?]>,
 ): void {
-  self.onmessage = async function (event: MessageEvent<[number, I]>) {
+  // deno-lint-ignore no-explicit-any
+  (self as any).onmessage = async function (event: MessageEvent<[number, I]>) {
     const [id, input] = event.data;
     try {
       const [output, transfer] = await handle(input);
-      self.postMessage([id, true, output], transfer!);
+      // deno-lint-ignore no-explicit-any
+      (self as any).postMessage([id, true, output], transfer!);
     } catch (error) {
-      self.postMessage([id, false, error]);
+      // deno-lint-ignore no-explicit-any
+      (self as any).postMessage([id, false, error]);
     }
   };
 }
