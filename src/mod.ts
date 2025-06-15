@@ -25,6 +25,7 @@ export class Thread<I, O> {
     number,
     [(value: O) => void, (reason?: unknown) => void]
   >();
+  #terminated = false;
   #worker: Worker;
   /**
    * Constructs a new instance.
@@ -50,6 +51,7 @@ export class Thread<I, O> {
    */
   send(input: I, transfer?: Transferable[]): Promise<O> {
     return new Promise<O>((resolve, reject) => {
+      if (this.#terminated) reject(new ThreadError("Web Worker is Terminated"));
       const id = ++this.#nextID;
       try {
         this.#worker.postMessage([id, input], transfer!);
@@ -66,6 +68,7 @@ export class Thread<I, O> {
    * promises are rejected.
    */
   terminate(): void {
+    this.#terminated = true;
     this.#worker.terminate();
     for (const [_id, [_resolve, reject]] of this.#pending.entries()) {
       reject(new ThreadError("Web Worker Terminated"));
