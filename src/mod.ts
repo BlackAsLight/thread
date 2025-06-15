@@ -68,7 +68,7 @@ export class Thread<I, O> {
   terminate(): void {
     this.#worker.terminate();
     for (const [_id, [_resolve, reject]] of this.#pending.entries()) {
-      reject(new Error("Web Worker Terminated"));
+      reject(new ThreadError("Web Worker Terminated"));
     }
     this.#pending.clear();
   }
@@ -77,5 +77,20 @@ export class Thread<I, O> {
     const [id, success, value] = event.data;
     this.#pending.get(id)?.[success ? 0 : 1](value);
     this.#pending.delete(id);
+  }
+}
+
+/**
+ * `ThreadError`, extends {@linkcode Error}, is a custom error class for
+ * {@linkcode Thread} errors.
+ */
+export class ThreadError extends Error {
+  /**
+   * Constructs a new instance.
+   * @param message The error message.
+   * @param options Error options.
+   */
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
   }
 }
