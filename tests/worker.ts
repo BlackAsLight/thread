@@ -1,6 +1,6 @@
 import { listen } from "@doctor/thread/worker";
 
-listen<number, number>(async function (x) {
+listen<[number, number]>(async (x) => {
   await new Promise((a) => setTimeout(a, 50));
   if (x) {
     return [x];
