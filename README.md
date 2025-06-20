@@ -9,7 +9,7 @@ promise like experience to pass values to and receive values from web workers.
 import { assertEquals } from "jsr:@std/assert";
 import { Thread } from "jsr:@doctor/thread";
 
-const thread = new Thread<number[], number>(
+const thread = new Thread<[number[], number]>(
   new URL("./worker.ts", import.meta.url).href,
 );
 
@@ -22,7 +22,7 @@ thread.terminate();
 ```ts ignore
 import { listen } from "jsr:@doctor/thread/worker";
 
-listen<number[], number>(function (input) {
+listen<[number[], number]>(function (input) {
   return [input.reduce((x, y) => x + y)];
 });
 ```
